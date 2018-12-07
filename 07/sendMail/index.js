@@ -5,7 +5,7 @@ const sendMail = require('./libs/sendMail');
   const transportResponse = await sendMail({
     template:     'hello',
     subject:      'Привет',
-    to:           'asdfasdf@asdfasdf.com',
+    to:           's.zelenov@javascript.info',
     name:         'Sergey'
   });
 

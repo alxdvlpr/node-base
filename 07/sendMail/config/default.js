@@ -6,7 +6,7 @@ module.exports = {
     transport: 'gmail',
     gmail: {
       user: 'course.test.mailer',
-      password: 'course-test-password1'
+      password: 'course-test-password2'
     },
     senders:  {
       // transactional emails, register/forgot pass etc

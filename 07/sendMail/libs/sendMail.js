@@ -12,13 +12,13 @@ const SMTPTransport = require('nodemailer-smtp-transport');
 const transportEngine = (process.env.NODE_ENV == 'test' || process.env.MAILER_DISABLED)
   ? stubTransport()
   : new SMTPTransport({
-    service: "Gmail",
-    debug: true,
-    auth: {
-      user: config.get('mailer.gmail.user'),
-      pass: config.get('mailer.gmail.password')
-    }
-  });
+      service: "Gmail",
+      debug: true,
+      auth: {
+        user: config.get('mailer.gmail.user'),
+        pass: config.get('mailer.gmail.password')
+      }
+    });
 
 const transport = nodemailer.createTransport(transportEngine);
 
@@ -26,7 +26,7 @@ transport.use('compile', htmlToText());
 
 module.exports = async function sendMail(options) {
   const sender = config.mailer.senders[options.from || 'default'];
-  const locals = { sender };
+  const locals = { sender, name: options.name };
 
   const html = pug.renderFile(
     path.join(config.template.root, 'email', options.template) + '.pug',
