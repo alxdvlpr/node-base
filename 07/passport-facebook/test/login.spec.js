@@ -6,8 +6,8 @@ const config = require('config');
 
 // puppeteer options
 const opts = {
-  // headless: false,
-  // slowMo: 300,
+  headless: false,
+  slowMo: 300,
   timeout: 60000,
   args: [
     '--disable-notifications'

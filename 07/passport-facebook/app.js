@@ -29,8 +29,8 @@ router.get('/oauth/facebook', passport.authenticate('facebook', {
   failureFlash: true
 }));
 
-router.get('/login/vk', passport.authenticate('vkontakte', config.get('providers.vk.passportOptions')));
-router.get('/oauth/vk', passport.authenticate('vkontakte', {
+router.get('/login/vkontakte', passport.authenticate('vkontakte', config.get('providers.vk.passportOptions')));
+router.get('/oauth/vkontakte', passport.authenticate('vkontakte', {
   successRedirect: '/',
   failureRedirect: '/',
   successFlash: true,

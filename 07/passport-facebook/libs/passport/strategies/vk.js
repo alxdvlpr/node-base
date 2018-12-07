@@ -5,7 +5,7 @@ const User = require('../../../models/User');
 module.exports = new VKStrategy({
     clientID: config.get('providers.vk.appId'),
     clientSecret: config.get('providers.vk.appSecret'),
-    callbackURL: `${config.get('server.site.host')}:${config.get('server.site.port')}/oauth/vk`,
+    callbackURL: `http://localhost:3000/oauth/vkontakte`,
     scope: ['email'],
     profileFields: ['email'],
   }, function(accessToken, refreshToken, params, profile, done) {

@@ -5,9 +5,12 @@ const User = require('../../../models/User');
 module.exports = new FacebookStrategy({
     clientID: config.get('providers.facebook.appId'),
     clientSecret: config.get('providers.facebook.appSecret'),
-    callbackURL: `${config.get('server.site.host')}:${config.get('server.site.port')}/oauth/facebook`,
+    callbackURL: `http://localhost:3000/oauth/facebook`,
     profileFields: ['displayName', 'email'],
   }, function(accessToken, refreshToken, profile, done) {
+    if (!profile.emails || !profile.emails.length) {
+      return done(null, false, {message: 'Нет email!'});
+    }
     const email = profile.emails[0].value;
 
     User.findOne({email}, (err, user) => {
