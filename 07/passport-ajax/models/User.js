@@ -1,6 +1,5 @@
 const mongoose = require('../libs/mongoose');
 const crypto = require('crypto');
-const _ = require('lodash');
 const config = require('config');
 
 const userSchema = new mongoose.Schema({
@@ -33,37 +32,36 @@ const userSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
-// user.password = '1312312'
-userSchema.virtual('password')
-  .set(function(password) {
 
-    if (password !== undefined) {
-      if (password.length < 4) {
-        this.invalidate('password', 'Пароль должен быть минимум 4 символа.');
+function generatePassword(salt, password) {
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(
+      password, salt,
+      config.get('crypto.hash.iterations'), config.get('crypto.hash.length'),
+      'sha512',
+      (err, key) => {
+        if (err) return reject(err);
+        resolve(key.toString('hex'));
       }
-    }
-    // '123123' + 'ijfasdiofja849' => 'asdf8a7sdf897asd8f7asdf'
-    this.salt = crypto.randomBytes(config.get('crypto.hash.length')).toString('base64');
-    this.passwordHash = crypto.pbkdf2Sync(
-      password,
-      this.salt,
-      config.get('crypto.hash.iterations'),
-      config.get('crypto.hash.length'),
-      'sha512'
-    ).toString('base64');
+    );
   });
+}
 
-userSchema.methods.checkPassword = function(password) {
+userSchema.methods.setPassword = async function setPassword(password) {
+  if (password !== undefined) {
+    if (password.length < 4) {
+      throw new Error('Пароль должен быть минимум 4 символа.');
+    }
+  }
+
+  this.salt = crypto.randomBytes(config.get('crypto.hash.length')).toString('hex');
+  this.passwordHash = await generatePassword(this.salt, password);
+};
+
+userSchema.methods.checkPassword = async function(password) {
   if (!password) return false;
 
-  const hash = crypto.pbkdf2Sync(
-    password,
-    this.salt,
-    config.get('crypto.hash.iterations'),
-    config.get('crypto.hash.length'),
-    'sha512'
-  ).toString('base64');
-  // https://www.npmjs.com/package/bcrypt
+  const hash = await generatePassword(this.salt, password);
   return hash === this.passwordHash;
 };
 
