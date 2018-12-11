@@ -13,7 +13,7 @@ exports.init = app => app.use(async (ctx, next) => {
     get flash() {
       return ctx.getFlashMessages();
     },
-    
+
     get csrf() {
       return ctx.csrf;
     }

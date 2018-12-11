@@ -8,7 +8,7 @@ const sessionStore = require('./sessionStore');
 
 function socket(server) {
   const io = socketIO(server);
-
+  // publish/subscribe
   io.adapter(socketRedis(config.get('redis.uri')));
 
   io.use(async function(socket, next) {
