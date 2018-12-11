@@ -8,18 +8,21 @@ exports.get = async function(ctx) {
 };
 
 exports.post = async function(ctx) {
-  
+
   const verifyEmailToken = uuid4();
   const email = ctx.request.body.email;
-  
+
   try {
-    await User.create({
+    const user = new User({
       email,
       displayName: ctx.request.body.displayName,
-      password: ctx.request.body.password,
+      verifyEmailToken: verifyEmailToken,
       verifiedEmail: false,
-      verifyEmailToken: verifyEmailToken
     });
+
+    await user.setPassword(ctx.request.body.password);
+
+    await user.save();
   } catch(e) {
     if (e.name === 'ValidationError') {
       let errorMessages = '';
@@ -32,14 +35,14 @@ exports.post = async function(ctx) {
       throw e;
     }
   }
-  
+
   await sendMail({
     template: 'verify-registration-email',
     to: email,
     subject: 'Подтверждение email',
     link: `${config.get('server.host')}:${config.get('server.port')}/confirm/${verifyEmailToken}`
   });
-  
+
   ctx.body = ctx.render('registered.pug');
-  
+
 };
